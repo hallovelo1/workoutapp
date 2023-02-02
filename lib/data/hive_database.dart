@@ -6,7 +6,7 @@ import 'package:workouttutorial/models/workout.dart';
 
 class HiveDatabase {
   // reference out hive box
-  final _myBox = Hive.box('workout_database4');
+  final _myBox = Hive.box('workout_database5');
 
   // check if there is already data stored, if not, recored the start date
   bool previousDataExists() {
@@ -47,7 +47,7 @@ class HiveDatabase {
     List<Workout> mySavedWorkouts = [];
 
     List<String> workoutNames = _myBox.get('WORKOUTS');
-    final exerciseDetails = _myBox.get('EXERCUSES');
+    final exerciseDetails = _myBox.get('EXERCISES');
 
     // create workout objects
     for (int i = 0; i < workoutNames.length; i++) {

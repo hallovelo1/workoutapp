@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Create new workout'),
+        title: const Text('Create new workout'),
         content: TextField(
           controller: newWorkoutNameController,
         ),
@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Consumer<WorkoutData>(
       builder: (context, value, child) => Scaffold(
-        backgroundColor: Colors.grey[500],
+        backgroundColor: Colors.grey[400],
         appBar: AppBar(
           title: const Text('Workout Tracker'),
         ),

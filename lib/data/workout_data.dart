@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:workouttutorial/data/hive_database.dart';
+import 'package:workouttutorial/datetime/date_time.dart';
 import 'package:workouttutorial/models/exercise.dart';
 import '../models/workout.dart';
 
@@ -17,7 +18,7 @@ class WorkoutData extends ChangeNotifier {
           sets: '3',
         ),
       ],
-    )
+    ),
   ];
 
   // if there are workouts already in database, then get that workout list
@@ -28,6 +29,9 @@ class WorkoutData extends ChangeNotifier {
     } else {
       db.saveToDatabase(workoutList);
     }
+
+    // load heat map
+    loadHeatMap();
   }
 
   // get the List of workouts
@@ -48,6 +52,8 @@ class WorkoutData extends ChangeNotifier {
     workoutList.add(Workout(name: name, exercises: []));
 
     notifyListeners();
+    // save to database
+    db.saveToDatabase(workoutList);
   }
 
   // add an exercise to a workout
@@ -66,6 +72,8 @@ class WorkoutData extends ChangeNotifier {
     );
 
     notifyListeners();
+    // save to database
+    db.saveToDatabase(workoutList);
   }
 
   // check off exercise
@@ -77,6 +85,10 @@ class WorkoutData extends ChangeNotifier {
     relevantExercise.isCompleted = !relevantExercise.isCompleted;
 
     notifyListeners();
+    // save to database
+    db.saveToDatabase(workoutList);
+    // load heat map
+    loadHeatMap();
   }
 
   // return relevant workout object, given a workout name
@@ -97,5 +109,44 @@ class WorkoutData extends ChangeNotifier {
         .firstWhere((exercise) => exercise.name == exerciseName);
 
     return relevantExercise;
+  }
+
+  // get start date
+  String getStartDate() {
+    return db.getStartDate();
+  }
+
+  Map<DateTime, int> heatMapDataSet = {};
+
+  void loadHeatMap() {
+    DateTime startDate = createDateTimeObject(getStartDate());
+
+    // count the number of days to load
+    int daysInBetween = DateTime.now().difference(startDate).inDays;
+
+    // go from start date to today, and each completion status to the database
+    for (int i = 0; i < daysInBetween + 1; i++) {
+      String yyyymmdd =
+          convertDateTimeToYYYYMMDD(startDate.add(Duration(days: i)));
+
+      // completion status = 0 or 1
+      int completionStatus = db.getCompletedStatus(yyyymmdd);
+
+      // year
+      int year = startDate.add(Duration(days: i)).year;
+
+      // month
+      int month = startDate.add(Duration(days: i)).month;
+
+      // day
+      int day = startDate.add(Duration(days: i)).day;
+
+      final percentForEachDay = <DateTime, int>{
+        DateTime(year, month, day): completionStatus
+      };
+
+      // add to the heat map dataset
+      heatMapDataSet.addEntries(percentForEachDay.entries);
+    }
   }
 }

@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_interpolation_to_compose_strings
-
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:workouttutorial/datetime/date_time.dart';
 
@@ -8,7 +6,7 @@ import 'package:workouttutorial/models/workout.dart';
 
 class HiveDatabase {
   // reference out hive box
-  final _myBox = Hive.box('workout_database');
+  final _myBox = Hive.box('workout_database4');
 
   // check if there is already data stored, if not, recored the start date
   bool previousDataExists() {
@@ -79,14 +77,7 @@ class HiveDatabase {
     return mySavedWorkouts;
   }
 
-  // return completion status of a given date yyyymmdd
-  int getCompletedStatus(String yyyymmdd) {
-    // returns 0 or 1, if null then return 0
-    int completionStatus = _myBox.get('COMPLETION_STATUS_$yyyymmdd') ?? 0;
-    return completionStatus;
-  }
-
-  // check if any exercises have been done
+// check if any exercises have been done
   bool exerciseCompleted(List<Workout> workouts) {
     // go trough each workout
     for (var workout in workouts) {
@@ -98,6 +89,13 @@ class HiveDatabase {
       }
     }
     return false;
+  }
+
+  // return completion status of a given date yyyymmdd
+  int getCompletedStatus(String yyyymmdd) {
+    // returns 0 or 1, if null then return 0
+    int completionStatus = _myBox.get('COMPLETION_STATUS_$yyyymmdd') ?? 0;
+    return completionStatus;
   }
 }
 

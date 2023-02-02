@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:workouttutorial/components/heat_map.dart';
 import 'package:workouttutorial/data/workout_data.dart';
 
 import 'workout_page.dart';
@@ -12,6 +13,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+
+    Provider.of<WorkoutData>(context, listen: false).initializeWorkoutList();
+  }
+
   // text controller
   final newWorkoutNameController = TextEditingController();
 
@@ -77,9 +85,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  Widget build(BuildContext content) {
+  Widget build(BuildContext context) {
     return Consumer<WorkoutData>(
       builder: (context, value, child) => Scaffold(
+        backgroundColor: Colors.grey[500],
         appBar: AppBar(
           title: const Text('Workout Tracker'),
         ),
@@ -87,16 +96,27 @@ class _HomePageState extends State<HomePage> {
           onPressed: createNewWorkout,
           child: const Icon(Icons.add),
         ),
-        body: ListView.builder(
-          itemCount: value.getWorkoutList().length,
-          itemBuilder: (context, index) => ListTile(
-            title: Text(value.getWorkoutList()[index].name),
-            trailing: IconButton(
-              icon: Icon(Icons.arrow_forward_ios),
-              onPressed: () =>
-                  goToWorkoutPage(value.getWorkoutList()[index].name),
+        body: ListView(
+          children: [
+            // HEATMAP
+            MyHeatMap(
+                datasets: value.heatMapDataSet,
+                startDateYYYYMMDD: value.getStartDate()),
+            // Workoutlist
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: value.getWorkoutList().length,
+              itemBuilder: (context, index) => ListTile(
+                title: Text(value.getWorkoutList()[index].name),
+                trailing: IconButton(
+                  icon: Icon(Icons.arrow_forward_ios),
+                  onPressed: () =>
+                      goToWorkoutPage(value.getWorkoutList()[index].name),
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

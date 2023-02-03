@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workouttutorial/components/exercise_tile.dart';
 import 'package:workouttutorial/data/workout_data.dart';
+import 'package:vibration/vibration.dart';
 
 class WorkoutPage extends StatefulWidget {
   final String workoutName;
@@ -87,6 +88,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
   // cancel workout
   void cancel() {
     Navigator.pop(context);
+    Vibration.vibrate(duration: 1000);
     clear();
   }
 
